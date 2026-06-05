@@ -4,119 +4,186 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lacak Pesanan EditinBang</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f6f9;
+            font-family: 'Poppins', sans-serif;
+            background-color: #0b0f19;
             margin: 0;
             padding: 20px;
-            color: #333;
+            color: #f3f4f6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 90vh;
         }
         .container {
-            max-width: 600px;
-            margin: 40px auto;
-            background: #fff;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 550px;
+            background: #111827;
+            padding: 40px 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            border: 1px solid #1f2937;
         }
         h1 {
             text-align: center;
-            color: #1a73e8;
-            margin-bottom: 30px;
+            color: #ffffff;
+            margin-bottom: 5px;
+            font-size: 28px;
+            font-weight: 700;
+        }
+        .subtitle {
+            text-align: center;
+            color: #9ca3af;
+            font-size: 14px;
+            margin-bottom: 35px;
         }
         .search-box {
             display: flex;
-            gap: 10px;
-            margin-bottom: 30px;
+            gap: 12px;
+            margin-bottom: 10px;
         }
         input[type="text"] {
             flex: 1;
-            padding: 12px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-size: 16px;
+            padding: 14px 20px;
+            background-color: #1f2937;
+            border: 1px solid #374151;
+            border-radius: 10px;
+            font-size: 15px;
+            color: #ffffff;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        input[type="text"]:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
         }
         button {
-            padding: 12px 24px;
-            background-color: #1a73e8;
+            padding: 14px 28px;
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
             color: white;
             border: none;
-            border-radius: 4px;
-            font-size: 16px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
             cursor: pointer;
+            transition: all 0.3s ease;
         }
         button:hover {
-            background-color: #1557b0;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
         }
         .result-card {
             display: none;
-            border-top: 2px solid #eee;
-            padding-top: 20px;
+            border-top: 1px solid #374151;
+            padding-top: 25px;
+            margin-top: 25px;
+            animation: fadeIn 0.5s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .status-title {
+            font-size: 14px;
+            color: #9ca3af;
+            margin-bottom: 5px;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            background-color: rgba(99, 102, 241, 0.1);
+            color: #818cf8;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 15px;
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            margin-bottom: 20px;
+            text-transform: capitalize;
         }
         .progress-container {
-            background-color: #e0e0e0;
-            border-radius: 10px;
-            margin: 20px 0;
-            height: 25px;
+            background-color: #1f2937;
+            border-radius: 20px;
+            margin: 25px 0;
+            height: 24px;
             width: 100%;
             overflow: hidden;
-            position: relative;
+            border: 1px solid #374151;
         }
         .progress-bar {
-            background-color: #007bff;
+            background: linear-gradient(90deg, #6366f1 0%, #10b981 100%);
             height: 100%;
             width: 0%;
             text-align: center;
             color: white;
-            line-height: 25px;
-            font-weight: bold;
-            transition: width 0.5s ease;
+            line-height: 24px;
+            font-size: 13px;
+            font-weight: 700;
+            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+        }
+        .detail-list {
+            margin-top: 20px;
         }
         .detail-item {
-            margin-bottom: 12px;
-            font-size: 16px;
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #1f2937;
+            font-size: 15px;
+        }
+        .detail-item:last-child {
+            border-bottom: none;
+            flex-direction: column;
+            gap: 5px;
         }
         .detail-label {
-            font-weight: bold;
-            color: #666;
+            color: #9ca3af;
         }
-        .status-badge {
-            display: inline-block;
-            padding: 6px 12px;
-            background-color: #fff3cd;
-            color: #856404;
-            border-radius: 4px;
-            font-weight: bold;
-            margin-top: 5px;
+        .detail-value {
+            color: #ffffff;
+            font-weight: 500;
+            text-align: right;
+        }
+        .detail-item:last-child .detail-value {
+            text-align: left;
+            background: #1f2937;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #d1d5db;
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>Lacak Pesanan EditinBang</h1>
+    <h1>EditinBang</h1>
+    <div class="subtitle">Sistem Pelacakan Pesanan Klien</div>
     
     <div class="search-box">
-        <input type="text" id="noPesananInput" placeholder="Masukkan Nomor Pesanan Anda...">
-        <button onclick="lacakPesanan()">Cari</button>
+        <input type="text" id="noPesananInput" placeholder="Masukkan Nomor Pesanan...">
+        <button onclick="lacakPesanan()">Lacak</button>
     </div>
 
     <div id="hasilTracking" class="result-card">
-        <h3>Status Pesanan:</h3>
+        <div class="status-title">Status Saat Ini:</div>
         <div id="txtStatus" class="status-badge">Menunggu...</div>
 
         <div class="progress-container">
             <div id="progressBar" class="progress-bar">0%</div>
         </div>
 
-        <div class="detail-item"><span class="detail-label">Nomor Pesanan:</span> <span id="txtNoPesanan"></span></div>
-        <div class="detail-item"><span class="detail-label">Nama Pemesan:</span> <span id="txtNama"></span></div>
-        <div class="detail-item"><span class="detail-label">Jenis Produk:</span> <span id="txtProduk"></span></div>
-        <div class="detail-item"><span class="detail-label">Harga:</span> <span id="txtHarga"></span></div>
-        <div class="detail-item"><span class="detail-label">Deadline:</span> <span id="txtDeadline"></span></div>
-        <div class="detail-item"><span class="detail-label">Editor:</span> <span id="txtEditor"></span></div>
-        <div class="detail-item"><span class="detail-label">Catatan:</span> <span id="txtNote"></span></div>
+        <div class="detail-list">
+            <div class="detail-item"><span class="detail-label">Nomor Pesanan</span><span id="txtNoPesanan" class="detail-value"></span></div>
+            <div class="detail-item"><span class="detail-label">Nama Klien</span><span id="txtNama" class="detail-value"></span></div>
+            <div class="detail-item"><span class="detail-label">Jenis Produk</span><span id="txtProduk" class="detail-value"></span></div>
+            <div class="detail-item"><span class="detail-label">Total Harga</span><span id="txtHarga" class="detail-value"></span></div>
+            <div class="detail-item"><span class="detail-label">Deadline</span><span id="txtDeadline" class="detail-value"></span></div>
+            <div class="detail-item"><span class="detail-label">Editor Penanggung Jawab</span><span id="txtEditor" class="detail-value"></span></div>
+            <div class="detail-item"><span class="detail-label">Catatan Editor</span><span id="txtNote" class="detail-value"></span></div>
+        </div>
     </div>
 </div>
 
@@ -137,7 +204,6 @@
     const app = initializeApp(firebaseConfig);
     const database = getDatabase(app);
 
-    // Mendaftarkan fungsi ke window agar bisa dipanggil lewat onclick HTML
     window.lacakPesanan = function() {
         const noPesanan = document.getElementById('noPesananInput').value.trim();
         if (!noPesanan) {
@@ -165,12 +231,6 @@
                 const pBar = document.getElementById('progressBar');
                 pBar.style.width = data.progres + "%";
                 pBar.innerText = data.progres + "%";
-                
-                if(data.progres === 100) {
-                    pBar.style.backgroundColor = "#28a745";
-                } else {
-                    pBar.style.backgroundColor = "#007bff";
-                }
             } else {
                 document.getElementById('hasilTracking').style.display = "none";
                 alert("Nomor pesanan tidak ditemukan. Mohon periksa kembali.");
