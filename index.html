@@ -64,7 +64,7 @@
             position: relative;
         }
         .progress-bar {
-            background-color: #28a745;
+            background-color: #007bff;
             height: 100%;
             width: 0%;
             text-align: center;
@@ -91,9 +91,6 @@
             margin-top: 5px;
         }
     </style>
-
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 </head>
 <body>
 
@@ -123,31 +120,34 @@
     </div>
 </div>
 
-<script>
-    // MASUKKAN KONFIGURASI FIREBASE KAMU DI SINI
-    const firebaseConfig = {
-        apiKey: "CONTOH_API_KEY",
-        authDomain: "CONTOH_PROJECT.firebaseapp.com",
-        databaseURL: "https://CONTOH_PROJECT-default-rtdb.firebaseio.com",
-        projectId: "CONTOH_PROJECT",
-        storageBucket: "CONTOH_PROJECT.appspot.com",
-        messagingSenderId: "CONTOH_ID",
-        appId: "CONTOH_APP_ID"
-    };
-    
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
-    const database = firebase.database();
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-database.js";
 
-    function lacakPesanan() {
+    const firebaseConfig = {
+        apiKey: "AIzaSyC5KIQvwLtVpSCZo9eIFbvMVAxLuKvI-y0",
+        authDomain: "editintrack.firebaseapp.com",
+        databaseURL: "https://editintrack-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "editintrack",
+        storageBucket: "editintrack.firebasestorage.app",
+        messagingSenderId: "141841901436",
+        appId: "1:141841901436:web:752078e47fb168b03be6f9"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const database = getDatabase(app);
+
+    // Mendaftarkan fungsi ke window agar bisa dipanggil lewat onclick HTML
+    window.lacakPesanan = function() {
         const noPesanan = document.getElementById('noPesananInput').value.trim();
         if (!noPesanan) {
             alert("Silakan masukkan nomor pesanan terlebih dahulu.");
             return;
         }
 
-        // Ambil data secara realtime menggunakan .on agar jika admin update, halaman user langsung berubah otomatis
-        database.ref('pesanan/' + noPesanan).on('value', (snapshot) => {
+        const pesananRef = ref(database, 'pesanan/' + noPesanan);
+        
+        onValue(pesananRef, (snapshot) => {
             if (snapshot.exists()) {
                 const data = snapshot.val();
                 
@@ -162,12 +162,10 @@
                 document.getElementById('txtNote').innerText = data.note || "-";
                 document.getElementById('txtStatus').innerText = data.status;
 
-                // Update Progress Bar
                 const pBar = document.getElementById('progressBar');
                 pBar.style.width = data.progres + "%";
                 pBar.innerText = data.progres + "%";
                 
-                // Ubah warna bar jika selesai
                 if(data.progres === 100) {
                     pBar.style.backgroundColor = "#28a745";
                 } else {
