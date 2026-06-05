@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lacak Pesanan EditinBang</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            max-width: 600px;
+            margin: 40px auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #1a73e8;
+            margin-bottom: 30px;
+        }
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+        input[type="text"] {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        button {
+            padding: 12px 24px;
+            background-color: #1a73e8;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #1557b0;
+        }
+        .result-card {
+            display: none;
+            border-top: 2px solid #eee;
+            padding-top: 20px;
+        }
+        .progress-container {
+            background-color: #e0e0e0;
+            border-radius: 10px;
+            margin: 20px 0;
+            height: 25px;
+            width: 100%;
+            overflow: hidden;
+            position: relative;
+        }
+        .progress-bar {
+            background-color: #28a745;
+            height: 100%;
+            width: 0%;
+            text-align: center;
+            color: white;
+            line-height: 25px;
+            font-weight: bold;
+            transition: width 0.5s ease;
+        }
+        .detail-item {
+            margin-bottom: 12px;
+            font-size: 16px;
+        }
+        .detail-label {
+            font-weight: bold;
+            color: #666;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            background-color: #fff3cd;
+            color: #856404;
+            border-radius: 4px;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+    </style>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+</head>
+<body>
+
+<div class="container">
+    <h1>Lacak Pesanan EditinBang</h1>
+    
+    <div class="search-box">
+        <input type="text" id="noPesananInput" placeholder="Masukkan Nomor Pesanan Anda...">
+        <button onclick="lacakPesanan()">Cari</button>
+    </div>
+
+    <div id="hasilTracking" class="result-card">
+        <h3>Status Pesanan:</h3>
+        <div id="txtStatus" class="status-badge">Menunggu...</div>
+
+        <div class="progress-container">
+            <div id="progressBar" class="progress-bar">0%</div>
+        </div>
+
+        <div class="detail-item"><span class="detail-label">Nomor Pesanan:</span> <span id="txtNoPesanan"></span></div>
+        <div class="detail-item"><span class="detail-label">Nama Pemesan:</span> <span id="txtNama"></span></div>
+        <div class="detail-item"><span class="detail-label">Jenis Produk:</span> <span id="txtProduk"></span></div>
+        <div class="detail-item"><span class="detail-label">Harga:</span> <span id="txtHarga"></span></div>
+        <div class="detail-item"><span class="detail-label">Deadline:</span> <span id="txtDeadline"></span></div>
+        <div class="detail-item"><span class="detail-label">Editor:</span> <span id="txtEditor"></span></div>
+        <div class="detail-item"><span class="detail-label">Catatan:</span> <span id="txtNote"></span></div>
+    </div>
+</div>
+
+<script>
+    // MASUKKAN KONFIGURASI FIREBASE KAMU DI SINI
+    const firebaseConfig = {
+        apiKey: "CONTOH_API_KEY",
+        authDomain: "CONTOH_PROJECT.firebaseapp.com",
+        databaseURL: "https://CONTOH_PROJECT-default-rtdb.firebaseio.com",
+        projectId: "CONTOH_PROJECT",
+        storageBucket: "CONTOH_PROJECT.appspot.com",
+        messagingSenderId: "CONTOH_ID",
+        appId: "CONTOH_APP_ID"
+    };
+    
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+
+    function lacakPesanan() {
+        const noPesanan = document.getElementById('noPesananInput').value.trim();
+        if (!noPesanan) {
+            alert("Silakan masukkan nomor pesanan terlebih dahulu.");
+            return;
+        }
+
+        // Ambil data secara realtime menggunakan .on agar jika admin update, halaman user langsung berubah otomatis
+        database.ref('pesanan/' + noPesanan).on('value', (snapshot) => {
+            if (snapshot.exists()) {
+                const data = snapshot.val();
+                
+                document.getElementById('hasilTracking').style.display = "block";
+                
+                document.getElementById('txtNoPesanan').innerText = data.nomor_pesanan;
+                document.getElementById('txtNama').innerText = data.nama_pemesan;
+                document.getElementById('txtProduk').innerText = data.jenis_produk;
+                document.getElementById('txtHarga').innerText = "Rp " + parseInt(data.harga).toLocaleString('id-ID');
+                document.getElementById('txtDeadline').innerText = data.deadline;
+                document.getElementById('txtEditor').innerText = data.editor;
+                document.getElementById('txtNote').innerText = data.note || "-";
+                document.getElementById('txtStatus').innerText = data.status;
+
+                // Update Progress Bar
+                const pBar = document.getElementById('progressBar');
+                pBar.style.width = data.progres + "%";
+                pBar.innerText = data.progres + "%";
+                
+                // Ubah warna bar jika selesai
+                if(data.progres === 100) {
+                    pBar.style.backgroundColor = "#28a745";
+                } else {
+                    pBar.style.backgroundColor = "#007bff";
+                }
+            } else {
+                document.getElementById('hasilTracking').style.display = "none";
+                alert("Nomor pesanan tidak ditemukan. Mohon periksa kembali.");
+            }
+        });
+    }
+</script>
+
+</body>
+</html>
