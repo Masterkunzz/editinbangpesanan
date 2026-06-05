@@ -77,9 +77,6 @@
             background-color: #f2f2f2;
         }
     </style>
-
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 </head>
 <body>
 
@@ -101,7 +98,7 @@
     <h3>Buat Pesanan Baru</h3>
     <form id="formPesanan" onsubmit="simpanPesanan(event)">
         <div class="form-group">
-            <label>Nomor Pesanan (Contoh: EB-001)</label>
+            <label>Nomor Pesanan</label>
             <input type="text" id="noPesanan" required>
         </div>
         <div class="form-group">
@@ -110,7 +107,7 @@
         </div>
         <div class="form-group">
             <label>Jenis Produk</label>
-            <input type="text" id="jenisProduk" placeholder="Misal: Video Mentahan Minecraft / Shorts" required>
+            <input type="text" id="jenisProduk" placeholder="Misal: Video Minecraft / Shorts" required>
         </div>
         <div class="form-group">
             <label>Harga (Rp)</label>
@@ -146,42 +143,42 @@
             </tr>
         </thead>
         <tbody id="tabelPesananBody">
-            </tbody>
+            <tr><td colspan='6' style='text-align:center;'>Memuat data...</td></tr>
+        </tbody>
     </table>
 </div>
 
-<script>
-    // MASUKKAN KONFIGURASI FIREBASE KAMU DI SINI (SAMA SEPERTI DI INDEX.HTML)
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
+    import { getDatabase, ref, set, update, onValue } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-database.js";
+
     const firebaseConfig = {
-        apiKey: "CONTOH_API_KEY",
-        authDomain: "CONTOH_PROJECT.firebaseapp.com",
-        databaseURL: "https://CONTOH_PROJECT-default-rtdb.firebaseio.com",
-        projectId: "CONTOH_PROJECT",
-        storageBucket: "CONTOH_PROJECT.appspot.com",
-        messagingSenderId: "CONTOH_ID",
-        appId: "CONTOH_APP_ID"
+        apiKey: "AIzaSyC5KIQvwLtVpSCZo9eIFbvMVAxLuKvI-y0",
+        authDomain: "editintrack.firebaseapp.com",
+        databaseURL: "https://editintrack-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "editintrack",
+        storageBucket: "editintrack.firebasestorage.app",
+        messagingSenderId: "141841901436",
+        appId: "1:141841901436:web:752078e47fb168b03be6f9"
     };
 
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
-    const database = firebase.database();
+    const app = initializeApp(firebaseConfig);
+    const database = getDatabase(app);
 
-    // Fungsi Login Sederhana
-    function prosesLogin() {
+    window.prosesLogin = function() {
         const user = document.getElementById('username').value;
         const pass = document.getElementById('password').value;
 
         if (user === "Admin" && pass === "Ahmad") {
             document.getElementById('loginBox').style.display = "none";
             document.getElementById('adminContent').style.display = "block";
-            muatDaftarPesanan(); // Load data setelah login sukses
+            muatDaftarPesanan();
         } else {
             alert("Username atau Password salah!");
         }
     }
 
-    // Fungsi Simpan Pesanan Baru
-    function simpanPesanan(e) {
+    window.simpanPesanan = function(e) {
         e.preventDefault();
         
         const noPesanan = document.getElementById('noPesanan').value.trim();
@@ -194,11 +191,11 @@
             deadline: document.getElementById('deadline').value,
             editor: document.getElementById('editor').value,
             note: document.getElementById('note').value,
-            status: "Editor sudah menerima project",
+            status: "editor sudah menerima project",
             progres: 10
         };
 
-        database.ref('pesanan/' + noPesanan).set(dataPesanan)
+        set(ref(database, 'pesanan/' + noPesanan), dataPesanan)
         .then(() => {
             alert("Pesanan " + noPesanan + " berhasil ditambahkan!");
             document.getElementById('formPesanan').reset();
@@ -208,38 +205,37 @@
         });
     }
 
-    // Fungsi Mengubah Progress via Kontrol Dropdown Admin
-    function ubahStatus(noPesanan, statusBaru) {
+    window.ubahStatus = function(noPesanan, statusBaru) {
         let progresBaru = 10;
 
-        if (statusBaru === "Editor sudah menerima project") progresBaru = 10;
-        else if (statusBaru === "Proses editing") progresBaru = 40;
-        else if (statusBaru === "Finishing") progresBaru = 80;
-        else if (statusBaru === "Selesai") progresBaru = 100;
+        if (statusBaru === "editor sudah menerima project") progresBaru = 10;
+        else if (statusBaru === "proses editing") progresBaru = 40;
+        else if (statusBaru === "finishing") progresBaru = 80;
+        else if (statusBaru === "selesai") progresBaru = 100;
 
-        database.ref('pesanan/' + noPesanan).update({
+        update(ref(database, 'pesanan/' + noPesanan), {
             status: statusBaru,
             progres: progresBaru
         });
     }
 
-    // Ambil Semua Data Pesanan untuk Ditampilkan di Tabel Admin
     function muatDaftarPesanan() {
-        database.ref('pesanan').on('value', (snapshot) => {
+        const pesananAllRef = ref(database, 'pesanan');
+        
+        onValue(pesananAllRef, (snapshot) => {
             const tbody = document.getElementById('tabelPesananBody');
-            tbody.innerHTML = ""; // Bersihkan tabel terlebih dahulu
+            tbody.innerHTML = "";
             
             if (snapshot.exists()) {
                 snapshot.forEach((childSnapshot) => {
                     const data = childSnapshot.val();
                     
-                    // Template Dropdown Pilihan Status sesuai permintaan kamu
                     const selectHTML = `
                         <select onchange="ubahStatus('${data.nomor_pesanan}', this.value)">
-                            <option value="Editor sudah menerima project" ${data.status === 'Editor sudah menerima project' ? 'selected' : ''}>1. Menerima Project (10%)</option>
-                            <option value="Proses editing" ${data.status === 'Proses editing' ? 'selected' : ''}>2. Proses Editing (40%)</option>
-                            <option value="Finishing" ${data.status === 'Finishing' ? 'selected' : ''}>3. Finishing (80%)</option>
-                            <option value="Selesai" ${data.status === 'Selesai' ? 'selected' : ''}>4. Selesai (100%)</option>
+                            <option value="editor sudah menerima project" ${data.status === 'editor sudah menerima project' ? 'selected' : ''}>1. Menerima Project (10%)</option>
+                            <option value="proses editing" ${data.status === 'proses editing' ? 'selected' : ''}>2. Proses Editing (40%)</option>
+                            <option value="finishing" ${data.status === 'finishing' ? 'selected' : ''}>3. Finishing (80%)</option>
+                            <option value="selesai" ${data.status === 'selesai' ? 'selected' : ''}>4. Selesai (100%)</option>
                         </select>
                     `;
 
