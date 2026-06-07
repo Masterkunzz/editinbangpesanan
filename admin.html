@@ -27,7 +27,7 @@
             color: #111827;
         }
         .container {
-            max-width: 950px;
+            max-width: 1050px;
             margin: 0 auto;
             background: #ffffff;
             padding: 40px;
@@ -83,6 +83,19 @@
         }
         button:hover {
             background-color: #4338ca;
+        }
+        .btn-wa {
+            background-color: #25d366;
+            padding: 6px 12px;
+            font-size: 12px;
+            color: white;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-block;
+        }
+        .btn-wa:hover {
+            background-color: #1ebd59;
         }
         .admin-content {
             display: none;
@@ -143,23 +156,31 @@
         <div class="form-grid">
             <div class="form-group">
                 <label>Nomor Pesanan</label>
-                <input type="text" id="noPesanan" placeholder="Misal: EB-001" required>
+                <input type="text" id="noPesanan" placeholder="Misal: EDITINBANG-1284" required>
             </div>
             <div class="form-group">
                 <label>Nama Pemesan / Klien</label>
-                <input type="text" id="namaPemesan" required>
+                <input type="text" id="namaPemesan" placeholder="Misal: WargaWA-1321" required>
+            </div>
+            <div class="form-group">
+                <label>Nomor WhatsApp Klien</label>
+                <input type="text" id="nomorWA" placeholder="Misal: 08123456789 atau 628123456789" required>
             </div>
             <div class="form-group">
                 <label>Jenis Produk</label>
-                <input type="text" id="jenisProduk" placeholder="Misal: Video Mentahan / Shorts Minecraft" required>
+                <input type="text" id="jenisProduk" placeholder="Misal: Video Minecraft / Shorts" required>
             </div>
             <div class="form-group">
-                <label>Harga (Rp)</label>
-                <input type="number" id="harga" required>
+                <label>Harga Normal (Opsional - Diisi jika ada diskon)</label>
+                <input type="number" id="hargaNormal" placeholder="Misal: 100000">
+            </div>
+            <div class="form-group">
+                <label>Harga Diskon / Harga Fix (Rp)</label>
+                <input type="number" id="hargaDiskon" placeholder="Misal: 75000" required>
             </div>
             <div class="form-group">
                 <label>Deadline Pekerjaan</label>
-                <input type="date" id="deadline" required>
+                <input type="text" id="deadline" placeholder="Misal: 2 hari / 15 Juni 2026" required>
             </div>
             <div class="form-group">
                 <label>Editor</label>
@@ -170,7 +191,7 @@
                 <textarea id="note" rows="3" placeholder="Tambahkan instruksi khusus editing jika ada..."></textarea>
             </div>
         </div>
-        <button type="submit" style="margin-top: 10px;">Tambah Pesanan</button>
+        <button type="submit" style="margin-top: 10px;">Tambah & Kirim WA</button>
     </form>
 
     <hr>
@@ -186,10 +207,11 @@
                     <th>Editor</th>
                     <th>Status Saat Ini</th>
                     <th>Ubah Kontrol Status</th>
+                    <th>Aksi</th>
                 </tr>
             </thead>
             <tbody id="tabelPesananBody">
-                <tr><td colspan='6' style='text-align:center;'>Memuat data...</td></tr>
+                <tr><td colspan='7' style='text-align:center;'>Memuat data...</td></tr>
             </tbody>
         </table>
     </div>
@@ -197,7 +219,7 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
-    import { getDatabase, ref, set, update, onValue } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-database.js";
+    import { getDatabase, ref, set, update, onValue, get } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-database.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyC5KIQvwLtVpSCZo9eIFbvMVAxLuKvI-y0",
@@ -225,16 +247,32 @@
         }
     }
 
+    // Fungsi pembantu untuk konversi nomor HP berawalan 0 ke format internasional 62
+    function formatKe62(nomor) {
+        let cleanNumber = nomor.replace(/[^0-9]/g, '');
+        if (cleanNumber.startsWith('0')) {
+            cleanNumber = '62' + cleanNumber.slice(1);
+        }
+        return cleanNumber;
+    }
+
     window.simpanPesanan = function(e) {
         e.preventDefault();
         
         const noPesanan = document.getElementById('noPesanan').value.trim();
+        const waInput = document.getElementById('nomorWA').value.trim();
+        const waBersih = formatKe62(waInput);
+
+        const hargaNormalVal = document.getElementById('hargaNormal').value;
+        const hargaDiskonVal = document.getElementById('hargaDiskon').value;
         
         const dataPesanan = {
             nomor_pesanan: noPesanan,
             nama_pemesan: document.getElementById('namaPemesan').value,
+            nomor_wa: waBersih,
             jenis_produk: document.getElementById('jenisProduk').value,
-            harga: document.getElementById('harga').value,
+            harga_normal: hargaNormalVal || "",
+            harga_diskon: hargaDiskonVal,
             deadline: document.getElementById('deadline').value,
             editor: document.getElementById('editor').value,
             note: document.getElementById('note').value,
@@ -245,10 +283,54 @@
         set(ref(database, 'pesanan/' + noPesanan), dataPesanan)
         .then(() => {
             alert("Pesanan " + noPesanan + " berhasil ditambahkan!");
+            
+            // Picu fungsi kirim pesan WA otomatis setelah input sukses
+            bukaLinkWhatsApp(dataPesanan);
+            
             document.getElementById('formPesanan').reset();
         })
         .catch((error) => {
             alert("Gagal menyimpan data: " + error.message);
+        });
+    }
+
+    // Fungsi menyusun teks template nota dan membuka tab baru WhatsApp
+    function bukaLinkWhatsApp(data) {
+        let hargaTeks = "";
+        
+        // Logika mencoret harga normal jika diinput oleh admin
+        if (data.harga_normal) {
+            let hNormal = parseInt(data.harga_normal).toLocaleString('id-ID');
+            let hDiskon = parseInt(data.harga_diskon).toLocaleString('id-ID');
+            hargaTeks = `~${hNormal}~ ${hDiskon}`;
+        } else {
+            hargaTeks = parseInt(data.harga_diskon).toLocaleString('id-ID');
+        }
+
+        const templatePesan = `PESANAN DIPROSES ⌛
+
+Nomor Pesanan : ${data.nomor_pesanan}
+Pelanggan : ${data.nama_pemesan}
+Harga : ${hargaTeks}
+Deadline : ${data.deadline}
+Editor : ${data.editor}
+
+note
+* deadline yang berlaku hanya patokan maksimal, tidak menutup kemungkinan lebih cepat
+
+track pesanan real-time : statuspesanan.editinbang.my.id
+kritik dan saran : kritiksaran.editinbang.my.id`;
+
+        const URLWA = `https://api.whatsapp.com/send?phone=${data.nomor_wa}&text=${encodeURIComponent(templatePesan)}`;
+        window.open(URLWA, '_blank');
+    }
+
+    // Fungsi manual kirim ulang WA jika dipicu melalui tombol tabel daftar pesanan
+    window.kirimUlangWA = function(noPesanan) {
+        get(ref(database, 'pesanan/' + noPesanan)).then((snapshot) => {
+            if (snapshot.exists()) {
+                bukaLinkWhatsApp(snapshot.val());
+            }
         });
     }
 
@@ -278,7 +360,7 @@
                     const data = childSnapshot.val();
                     
                     const selectHTML = `
-                        <select onchange="ubahStatus('${data.nomor_pesanan}', this.value)" style="padding: 6px; border-radius: 6px;">
+                        <select onchange="ubahStatus('${data.nomor_pesanan}', this.value)" style="padding: 6px; border-radius: 6px; font-family: inherit;">
                             <option value="editor sudah menerima project" ${data.status === 'editor sudah menerima project' ? 'selected' : ''}>1. Menerima Project (10%)</option>
                             <option value="proses editing" ${data.status === 'proses editing' ? 'selected' : ''}>2. Proses Editing (40%)</option>
                             <option value="finishing" ${data.status === 'finishing' ? 'selected' : ''}>3. Finishing (80%)</option>
@@ -294,12 +376,15 @@
                             <td>${data.editor}</td>
                             <td><span class="badge-status">${data.status} (${data.progres}%)</span></td>
                             <td>${selectHTML}</td>
+                            <td>
+                                <button onclick="kirimUlangWA('${data.nomor_pesanan}')" class="btn-wa">Kirim WA</button>
+                            </td>
                         </tr>
                     `;
                     tbody.innerHTML += row;
                 });
             } else {
-                tbody.innerHTML = "<tr><td colspan='6' style='text-align:center;'>Belum ada data pesanan.</td></tr>";
+                tbody.innerHTML = "<tr><td colspan='7' style='text-align:center;'>Belum ada data pesanan.</td></tr>";
             }
         });
     }
