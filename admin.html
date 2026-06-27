@@ -22,120 +22,71 @@
             box-shadow: 0 8px 20px rgba(0,0,0,0.05);
             text-align: center;
         }
-        .login-box h2 {
-            margin-bottom: 25px;
-            color: #111827;
-        }
+        .login-box h2 { margin-bottom: 25px; color: #111827; }
         .container {
-            max-width: 1050px;
+            max-width: 1100px;
             margin: 0 auto;
             background: #ffffff;
             padding: 40px;
             border-radius: 14px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.05);
         }
-        h2, h3 {
-            color: #111827;
-            margin-top: 0;
-        }
-        .form-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            margin-bottom: 15px;
-        }
-        .form-group.full-width {
-            grid-column: span 2;
-        }
-        .form-group label {
-            margin-bottom: 6px;
-            font-weight: 500;
-            font-size: 14px;
-            color: #4b5563;
-        }
+        h2, h3 { color: #111827; margin-top: 0; }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .form-group { display: flex; flex-direction: column; margin-bottom: 15px; }
+        .form-group.full-width { grid-column: span 2; }
+        .form-group label { margin-bottom: 6px; font-weight: 500; font-size: 14px; color: #4b5563; }
         .form-group input, .form-group textarea, .form-group select {
-            padding: 12px;
-            border: 1px solid #d1d5db;
-            border-radius: 8px;
-            font-size: 14px;
-            font-family: inherit;
-            outline: none;
-            transition: border 0.2s;
+            padding: 12px; border: 1px solid #d1d5db; border-radius: 8px;
+            font-size: 14px; font-family: inherit; outline: none; transition: border 0.2s;
         }
-        .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
-            border-color: #4f46e5;
-        }
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus { border-color: #4f46e5; }
         button {
-            padding: 12px 24px;
-            background-color: #4f46e5;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            font-family: inherit;
-            transition: background 0.2s;
+            padding: 12px 24px; background-color: #4f46e5; color: white;
+            border: none; border-radius: 8px; font-size: 15px; font-weight: 600;
+            cursor: pointer; font-family: inherit; transition: background 0.2s;
         }
-        button:hover {
-            background-color: #4338ca;
-        }
+        button:hover { background-color: #4338ca; }
         .btn-wa {
-            background-color: #25d366;
-            padding: 6px 12px;
-            font-size: 12px;
-            color: white;
-            border-radius: 6px;
-            text-decoration: none;
-            font-weight: 600;
-            display: inline-block;
+            background-color: #25d366; padding: 6px 12px; font-size: 12px;
+            color: white; border-radius: 6px; text-decoration: none;
+            font-weight: 600; display: inline-block; border: none; cursor: pointer;
         }
-        .btn-wa:hover {
-            background-color: #1ebd59;
+        .btn-wa:hover { background-color: #1ebd59; }
+        .btn-danger {
+            background-color: #ef4444; padding: 6px 12px; font-size: 12px;
+            color: white; border-radius: 6px; font-weight: 600; border: none; cursor: pointer;
         }
-        .admin-content {
-            display: none;
-        }
-        .table-responsive {
-            overflow-x: auto;
-            margin-top: 25px;
-        }
-        .order-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 14px;
-        }
-        .order-table th, .order-table td {
-            padding: 14px;
-            text-align: left;
-            border-bottom: 1px solid #e5e7eb;
-        }
-        .order-table th {
-            background-color: #f9fafb;
-            font-weight: 600;
-            color: #374151;
-        }
+        .btn-danger:hover { background-color: #dc2626; }
+        .admin-content { display: none; }
+        .table-responsive { overflow-x: auto; margin-top: 25px; }
+        .order-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        .order-table th, .order-table td { padding: 14px; text-align: left; border-bottom: 1px solid #e5e7eb; }
+        .order-table th { background-color: #f9fafb; font-weight: 600; color: #374151; }
         .badge-status {
-            padding: 4px 8px;
-            background-color: #e0e7ff;
-            color: #4338ca;
-            border-radius: 6px;
-            font-weight: 500;
-            font-size: 12px;
+            padding: 4px 10px; border-radius: 6px; font-weight: 600; font-size: 12px;
         }
-        hr {
-            border: 0;
-            border-top: 1px solid #e5e7eb;
-            margin: 35px 0;
+        .badge-menerima { background:#dbeafe; color:#1d4ed8; }
+        .badge-editing  { background:#fef9c3; color:#92400e; }
+        .badge-finishing{ background:#fce7f3; color:#9d174d; }
+        .badge-selesai  { background:#d1fae5; color:#065f46; }
+        .progress-mini {
+            background: #e5e7eb; border-radius: 20px; height: 6px; width: 80px; margin-top: 4px;
         }
+        .progress-mini-bar { background: #6366f1; height: 100%; border-radius: 20px; transition: width 0.4s; }
+        hr { border: 0; border-top: 1px solid #e5e7eb; margin: 35px 0; }
+        .filter-bar { display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; align-items: center; }
+        .filter-bar select, .filter-bar input {
+            padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 8px;
+            font-family: inherit; font-size: 14px; outline: none;
+        }
+        .filter-bar select:focus, .filter-bar input:focus { border-color: #4f46e5; }
+        @media (max-width: 640px) { .form-grid { grid-template-columns: 1fr; } .form-group.full-width { grid-column: span 1; } }
     </style>
 </head>
 <body>
 
+<!-- Login -->
 <div id="loginBox" class="login-box">
     <h2>Login Admin</h2>
     <div class="form-group">
@@ -145,12 +96,15 @@
         <input type="password" id="password" placeholder="Password">
     </div>
     <button onclick="prosesLogin()" style="width: 100%; margin-top: 10px;">Masuk Panel</button>
+    <p id="login-err" style="color:#ef4444;font-size:13px;margin-top:10px;display:none;">Username / Password salah!</p>
 </div>
 
+<!-- Admin Panel -->
 <div id="adminContent" class="container admin-content">
     <h2>Panel Kontrol Pesanan EditinBang</h2>
     <hr>
-    
+
+    <!-- Form Pesanan Baru -->
     <h3>Buat Pesanan Baru</h3>
     <form id="formPesanan" onsubmit="simpanPesanan(event)">
         <div class="form-grid">
@@ -164,39 +118,72 @@
             </div>
             <div class="form-group">
                 <label>Nomor WhatsApp Klien</label>
-                <input type="text" id="nomorWA" placeholder="Misal: 08123456789 atau 628123456789" required>
+                <input type="text" id="nomorWA" placeholder="08123456789 atau 628123..." required>
             </div>
             <div class="form-group">
                 <label>Jenis Produk</label>
                 <input type="text" id="jenisProduk" placeholder="Misal: Video Minecraft / Shorts" required>
             </div>
             <div class="form-group">
-                <label>Harga Normal (Opsional - Diisi jika ada diskon)</label>
+                <label>Harga Normal (opsional, diisi jika ada diskon)</label>
                 <input type="number" id="hargaNormal" placeholder="Misal: 100000">
             </div>
             <div class="form-group">
-                <label>Harga Diskon / Harga Fix (Rp)</label>
+                <label>Harga Fix / Diskon (Rp)</label>
                 <input type="number" id="hargaDiskon" placeholder="Misal: 75000" required>
             </div>
             <div class="form-group">
                 <label>Deadline Pekerjaan</label>
                 <input type="text" id="deadline" placeholder="Misal: 2 hari / 15 Juni 2026" required>
             </div>
+            <!-- ✅ DROPDOWN EDITOR (mudah ditambah/edit di sini) -->
             <div class="form-group">
-                <label>Editor</label>
-                <input type="text" id="editor" required>
+                <label>Assign Editor</label>
+                <select id="editor" required>
+                    <option value="" disabled selected>— Pilih Editor —</option>
+                    <option value="Ahmad">Ahmad (CEO)</option>
+                    <option value="Villa">Villa</option>
+                    <option value="Fauzan">Fauzan</option>
+                    <option value="Neo">Neo</option>
+                </select>
             </div>
             <div class="form-group full-width">
                 <label>Catatan Tambahan</label>
-                <textarea id="note" rows="3" placeholder="Tambahkan instruksi khusus editing jika ada..."></textarea>
+                <textarea id="note" rows="3" placeholder="Instruksi khusus editing jika ada..."></textarea>
             </div>
         </div>
-        <button type="submit" style="margin-top: 10px;">Tambah & Kirim WA</button>
+        <button type="submit" style="margin-top: 10px;">
+            <span id="submit-text">💾 Simpan & Kirim WA</span>
+        </button>
     </form>
 
     <hr>
-    
-    <h3>Daftar & Kontrol Progress Pesanan</h3>
+
+    <!-- Daftar Pesanan -->
+    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+        <h3 style="margin:0">Daftar & Kontrol Progress Pesanan</h3>
+        <span id="total-badge" style="background:#ede9fe;color:#5b21b6;padding:4px 12px;border-radius:20px;font-size:13px;font-weight:600;"></span>
+    </div>
+
+    <!-- Filter -->
+    <div class="filter-bar" style="margin-top:16px;">
+        <select id="filter-editor" onchange="renderTable()">
+            <option value="">Semua Editor</option>
+            <option value="Ahmad">Ahmad</option>
+            <option value="Villa">Villa</option>
+            <option value="Fauzan">Fauzan</option>
+            <option value="Neo">Neo</option>
+        </select>
+        <select id="filter-status" onchange="renderTable()">
+            <option value="">Semua Status</option>
+            <option value="editor sudah menerima project">Menerima Project</option>
+            <option value="proses editing">Proses Editing</option>
+            <option value="finishing">Finishing</option>
+            <option value="selesai">Selesai</option>
+        </select>
+        <input type="text" id="filter-search" oninput="renderTable()" placeholder="Cari nama / nomor...">
+    </div>
+
     <div class="table-responsive">
         <table class="order-table">
             <thead>
@@ -204,14 +191,16 @@
                     <th>No Pesanan</th>
                     <th>Nama Klien</th>
                     <th>Produk</th>
+                    <th>Harga</th>
+                    <th>Deadline</th>
                     <th>Editor</th>
-                    <th>Status Saat Ini</th>
-                    <th>Ubah Kontrol Status</th>
+                    <th>Status & Progres</th>
+                    <th>Ubah Status</th>
                     <th>Aksi</th>
                 </tr>
             </thead>
             <tbody id="tabelPesananBody">
-                <tr><td colspan='7' style='text-align:center;'>Memuat data...</td></tr>
+                <tr><td colspan='9' style='text-align:center;'>Memuat data...</td></tr>
             </tbody>
         </table>
     </div>
@@ -219,7 +208,7 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
-    import { getDatabase, ref, set, update, onValue, get } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-database.js";
+    import { getDatabase, ref, set, update, onValue, get, remove } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-database.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyC5KIQvwLtVpSCZo9eIFbvMVAxLuKvI-y0",
@@ -231,83 +220,105 @@
         appId: "1:141841901436:web:752078e47fb168b03be6f9"
     };
 
-    const app = initializeApp(firebaseConfig);
+    const app      = initializeApp(firebaseConfig);
     const database = getDatabase(app);
 
-    window.prosesLogin = function() {
-        const user = document.getElementById('username').value;
-        const pass = document.getElementById('password').value;
+    // Semua data pesanan disimpan di sini untuk filter client-side
+    let allPesanan = [];
 
-        if (user === "Admin" && pass === "Ahmad") {
+    // ================================================================
+    // Login
+    // ================================================================
+    window.prosesLogin = function() {
+        const u = document.getElementById('username').value;
+        const p = document.getElementById('password').value;
+        if (u === "Admin" && p === "Ahmad") {
             document.getElementById('loginBox').style.display = "none";
             document.getElementById('adminContent').style.display = "block";
             muatDaftarPesanan();
         } else {
-            alert("Username atau Password salah!");
+            document.getElementById('login-err').style.display = "block";
         }
-    }
+    };
 
-    // Fungsi pembantu untuk konversi nomor HP berawalan 0 ke format internasional 62
+    // ================================================================
+    // Helpers
+    // ================================================================
     function formatKe62(nomor) {
-        let cleanNumber = nomor.replace(/[^0-9]/g, '');
-        if (cleanNumber.startsWith('0')) {
-            cleanNumber = '62' + cleanNumber.slice(1);
-        }
-        return cleanNumber;
+        let n = nomor.replace(/[^0-9]/g, '');
+        return n.startsWith('0') ? '62' + n.slice(1) : n;
     }
 
+    function badgeClass(status) {
+        if (status === 'editor sudah menerima project') return 'badge-menerima';
+        if (status === 'proses editing') return 'badge-editing';
+        if (status === 'finishing') return 'badge-finishing';
+        if (status === 'selesai') return 'badge-selesai';
+        return 'badge-menerima';
+    }
+
+    function labelStatus(status) {
+        const map = {
+            'editor sudah menerima project': 'Menerima Project',
+            'proses editing': 'Proses Editing',
+            'finishing': 'Finishing',
+            'selesai': 'Selesai'
+        };
+        return map[status] || status;
+    }
+
+    // ================================================================
+    // Simpan Pesanan
+    // ================================================================
     window.simpanPesanan = function(e) {
         e.preventDefault();
-        
-        const noPesanan = document.getElementById('noPesanan').value.trim();
-        const waInput = document.getElementById('nomorWA').value.trim();
-        const waBersih = formatKe62(waInput);
+        const btn = document.getElementById('submit-text');
+        btn.textContent = '⏳ Menyimpan...';
 
-        const hargaNormalVal = document.getElementById('hargaNormal').value;
-        const hargaDiskonVal = document.getElementById('hargaDiskon').value;
-        
+        const noPesanan   = document.getElementById('noPesanan').value.trim();
+        const waBersih    = formatKe62(document.getElementById('nomorWA').value.trim());
+        const hargaNormal = document.getElementById('hargaNormal').value;
+        const hargaDiskon = document.getElementById('hargaDiskon').value;
+
         const dataPesanan = {
-            nomor_pesanan: noPesanan,
-            nama_pemesan: document.getElementById('namaPemesan').value,
-            nomor_wa: waBersih,
-            jenis_produk: document.getElementById('jenisProduk').value,
-            harga_normal: hargaNormalVal || "",
-            harga_diskon: hargaDiskonVal,
-            deadline: document.getElementById('deadline').value,
-            editor: document.getElementById('editor').value,
-            note: document.getElementById('note').value,
-            status: "editor sudah menerima project",
-            progres: 10
+            nomor_pesanan : noPesanan,
+            nama_pemesan  : document.getElementById('namaPemesan').value,
+            nomor_wa      : waBersih,
+            jenis_produk  : document.getElementById('jenisProduk').value,
+            harga_normal  : hargaNormal || "",
+            harga_diskon  : hargaDiskon,
+            deadline      : document.getElementById('deadline').value,
+            editor        : document.getElementById('editor').value,   // ← dari dropdown
+            note          : document.getElementById('note').value,
+            status        : "editor sudah menerima project",
+            progres       : 10,
+            created_at    : Date.now()
         };
 
         set(ref(database, 'pesanan/' + noPesanan), dataPesanan)
-        .then(() => {
-            alert("Pesanan " + noPesanan + " berhasil ditambahkan!");
-            
-            // Picu fungsi kirim pesan WA otomatis setelah input sukses
-            bukaLinkWhatsApp(dataPesanan);
-            
-            document.getElementById('formPesanan').reset();
-        })
-        .catch((error) => {
-            alert("Gagal menyimpan data: " + error.message);
-        });
-    }
+            .then(() => {
+                bukaLinkWhatsApp(dataPesanan);
+                document.getElementById('formPesanan').reset();
+                btn.textContent = '💾 Simpan & Kirim WA';
+            })
+            .catch(err => {
+                alert("Gagal menyimpan: " + err.message);
+                btn.textContent = '💾 Simpan & Kirim WA';
+            });
+    };
 
-    // Fungsi menyusun teks template nota dan membuka tab baru WhatsApp
+    // ================================================================
+    // WhatsApp
+    // ================================================================
     function bukaLinkWhatsApp(data) {
-        let hargaTeks = "";
-        
-        // Logika mencoret harga normal jika diinput oleh admin
+        let hargaTeks;
         if (data.harga_normal) {
-            let hNormal = parseInt(data.harga_normal).toLocaleString('id-ID');
-            let hDiskon = parseInt(data.harga_diskon).toLocaleString('id-ID');
-            hargaTeks = `~${hNormal}~ ${hDiskon}`;
+            hargaTeks = `~${parseInt(data.harga_normal).toLocaleString('id-ID')}~ ${parseInt(data.harga_diskon).toLocaleString('id-ID')}`;
         } else {
             hargaTeks = parseInt(data.harga_diskon).toLocaleString('id-ID');
         }
 
-        const templatePesan = `PESANAN DIPROSES ⌛
+        const pesan = `PESANAN DIPROSES ⌛
 
 Nomor Pesanan : ${data.nomor_pesanan}
 Pelanggan : ${data.nama_pemesan}
@@ -321,73 +332,122 @@ note
 track pesanan real-time : statuspesanan.editinbang.my.id
 kritik dan saran : kritiksaran.editinbang.my.id`;
 
-        const URLWA = `https://api.whatsapp.com/send?phone=${data.nomor_wa}&text=${encodeURIComponent(templatePesan)}`;
-        window.open(URLWA, '_blank');
+        window.open(`https://api.whatsapp.com/send?phone=${data.nomor_wa}&text=${encodeURIComponent(pesan)}`, '_blank');
     }
 
-    // Fungsi manual kirim ulang WA jika dipicu melalui tombol tabel daftar pesanan
     window.kirimUlangWA = function(noPesanan) {
-        get(ref(database, 'pesanan/' + noPesanan)).then((snapshot) => {
-            if (snapshot.exists()) {
-                bukaLinkWhatsApp(snapshot.val());
-            }
+        get(ref(database, 'pesanan/' + noPesanan)).then(snap => {
+            if (snap.exists()) bukaLinkWhatsApp(snap.val());
         });
-    }
+    };
 
+    // ================================================================
+    // Update Status
+    // ================================================================
     window.ubahStatus = function(noPesanan, statusBaru) {
-        let progresBaru = 10;
-
-        if (statusBaru === "editor sudah menerima project") progresBaru = 10;
-        else if (statusBaru === "proses editing") progresBaru = 40;
-        else if (statusBaru === "finishing") progresBaru = 80;
-        else if (statusBaru === "selesai") progresBaru = 100;
-
+        const progresMap = {
+            'editor sudah menerima project': 10,
+            'proses editing': 40,
+            'finishing': 80,
+            'selesai': 100
+        };
         update(ref(database, 'pesanan/' + noPesanan), {
             status: statusBaru,
-            progres: progresBaru
+            progres: progresMap[statusBaru]
+        });
+    };
+
+    // ================================================================
+    // Hapus Pesanan
+    // ================================================================
+    window.hapusPesanan = function(noPesanan) {
+        if (!confirm(`Yakin hapus pesanan ${noPesanan}?`)) return;
+        remove(ref(database, 'pesanan/' + noPesanan));
+    };
+
+    // ================================================================
+    // Muat & Render
+    // ================================================================
+    function muatDaftarPesanan() {
+        onValue(ref(database, 'pesanan'), (snapshot) => {
+            allPesanan = [];
+            if (snapshot.exists()) {
+                snapshot.forEach(child => allPesanan.push(child.val()));
+            }
+            renderTable();
         });
     }
 
-    function muatDaftarPesanan() {
-        const pesananAllRef = ref(database, 'pesanan');
-        
-        onValue(pesananAllRef, (snapshot) => {
-            const tbody = document.getElementById('tabelPesananBody');
-            tbody.innerHTML = "";
-            
-            if (snapshot.exists()) {
-                snapshot.forEach((childSnapshot) => {
-                    const data = childSnapshot.val();
-                    
-                    const selectHTML = `
-                        <select onchange="ubahStatus('${data.nomor_pesanan}', this.value)" style="padding: 6px; border-radius: 6px; font-family: inherit;">
-                            <option value="editor sudah menerima project" ${data.status === 'editor sudah menerima project' ? 'selected' : ''}>1. Menerima Project (10%)</option>
-                            <option value="proses editing" ${data.status === 'proses editing' ? 'selected' : ''}>2. Proses Editing (40%)</option>
+    window.renderTable = function() {
+        const tbody       = document.getElementById('tabelPesananBody');
+        const fEditor     = document.getElementById('filter-editor').value;
+        const fStatus     = document.getElementById('filter-status').value;
+        const fSearch     = document.getElementById('filter-search').value.toLowerCase();
+        const totalBadge  = document.getElementById('total-badge');
+
+        let filtered = allPesanan.filter(d => {
+            const matchEditor = !fEditor || d.editor === fEditor;
+            const matchStatus = !fStatus || d.status === fStatus;
+            const matchSearch = !fSearch
+                || (d.nomor_pesanan && d.nomor_pesanan.toLowerCase().includes(fSearch))
+                || (d.nama_pemesan && d.nama_pemesan.toLowerCase().includes(fSearch));
+            return matchEditor && matchStatus && matchSearch;
+        });
+
+        // Sort: belum selesai dulu, then by created_at desc
+        filtered.sort((a, b) => {
+            if (a.status === 'selesai' && b.status !== 'selesai') return 1;
+            if (a.status !== 'selesai' && b.status === 'selesai') return -1;
+            return (b.created_at || 0) - (a.created_at || 0);
+        });
+
+        totalBadge.textContent = `${filtered.length} pesanan`;
+        tbody.innerHTML = '';
+
+        if (filtered.length === 0) {
+            tbody.innerHTML = "<tr><td colspan='9' style='text-align:center;color:#9ca3af;padding:30px;'>Tidak ada pesanan ditemukan.</td></tr>";
+            return;
+        }
+
+        filtered.forEach(data => {
+            let hargaHTML;
+            if (data.harga_normal) {
+                hargaHTML = `<span style="text-decoration:line-through;color:#9ca3af;font-size:12px;">Rp ${parseInt(data.harga_normal).toLocaleString('id-ID')}</span><br><strong style="color:#065f46;">Rp ${parseInt(data.harga_diskon).toLocaleString('id-ID')}</strong>`;
+            } else {
+                hargaHTML = `<strong>Rp ${parseInt(data.harga_diskon || 0).toLocaleString('id-ID')}</strong>`;
+            }
+
+            const bc = badgeClass(data.status);
+            const lb = labelStatus(data.status);
+
+            tbody.innerHTML += `
+                <tr style="${data.status === 'selesai' ? 'opacity:0.6;' : ''}">
+                    <td><strong style="font-family:monospace;color:#4f46e5;">${data.nomor_pesanan}</strong></td>
+                    <td>${data.nama_pemesan}</td>
+                    <td>${data.jenis_produk}</td>
+                    <td style="font-size:13px;">${hargaHTML}</td>
+                    <td>${data.deadline}</td>
+                    <td><strong>${data.editor}</strong></td>
+                    <td>
+                        <span class="badge-status ${bc}">${lb} (${data.progres}%)</span>
+                        <div class="progress-mini"><div class="progress-mini-bar" style="width:${data.progres}%"></div></div>
+                    </td>
+                    <td>
+                        <select onchange="ubahStatus('${data.nomor_pesanan}', this.value)" style="padding:6px;border-radius:6px;font-family:inherit;font-size:13px;border:1px solid #d1d5db;">
+                            <option value="editor sudah menerima project" ${data.status === 'editor sudah menerima project' ? 'selected' : ''}>1. Menerima (10%)</option>
+                            <option value="proses editing" ${data.status === 'proses editing' ? 'selected' : ''}>2. Editing (40%)</option>
                             <option value="finishing" ${data.status === 'finishing' ? 'selected' : ''}>3. Finishing (80%)</option>
                             <option value="selesai" ${data.status === 'selesai' ? 'selected' : ''}>4. Selesai (100%)</option>
                         </select>
-                    `;
-
-                    const row = `
-                        <tr>
-                            <td><strong>${data.nomor_pesanan}</strong></td>
-                            <td>${data.nama_pemesan}</td>
-                            <td>${data.jenis_produk}</td>
-                            <td>${data.editor}</td>
-                            <td><span class="badge-status">${data.status} (${data.progres}%)</span></td>
-                            <td>${selectHTML}</td>
-                            <td>
-                                <button onclick="kirimUlangWA('${data.nomor_pesanan}')" class="btn-wa">Kirim WA</button>
-                            </td>
-                        </tr>
-                    `;
-                    tbody.innerHTML += row;
-                });
-            } else {
-                tbody.innerHTML = "<tr><td colspan='7' style='text-align:center;'>Belum ada data pesanan.</td></tr>";
-            }
+                    </td>
+                    <td style="display:flex;gap:6px;flex-wrap:wrap;">
+                        <button class="btn-wa" onclick="kirimUlangWA('${data.nomor_pesanan}')">📲 WA</button>
+                        <button class="btn-danger" onclick="hapusPesanan('${data.nomor_pesanan}')">🗑️</button>
+                    </td>
+                </tr>
+            `;
         });
-    }
+    };
 </script>
 
 </body>
