@@ -214,7 +214,6 @@
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
     import { getDatabase, ref, set, update, onValue, get, remove } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-database.js";
-    import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyC5KIQvwLtVpSCZo9eIFbvMVAxLuKvI-y0",
@@ -228,18 +227,7 @@
 
     const app      = initializeApp(firebaseConfig);
     const database = getDatabase(app);
-    const auth     = getAuth(app);
 
-    // Tunggu auth selesai dulu, baru boleh fetch data
-    let authReady = false;
-    let pendingLoad = false;
-    signInAnonymously(auth)
-        .then(() => {
-            console.log('Firebase auth OK');
-            authReady = true;
-            if (pendingLoad) muatDaftarPesanan();
-        })
-        .catch(e => console.error('Auth gagal:', e));
 
     // Semua data pesanan disimpan di sini untuk filter client-side
     let allPesanan = [];
@@ -253,12 +241,7 @@
         if (u === "Admin" && p === "Ahmad") {
             document.getElementById('loginBox').style.display = "none";
             document.getElementById('adminContent').style.display = "block";
-            if (authReady) {
-                muatDaftarPesanan();
-            } else {
-                pendingLoad = true;
-                document.getElementById('tabelPesananBody').innerHTML = "<tr><td colspan='10' style='text-align:center;color:#6366f1;padding:20px;'>⏳ Menghubungkan ke database...</td></tr>";
-            }
+            muatDaftarPesanan();
         } else {
             document.getElementById('login-err').style.display = "block";
         }
