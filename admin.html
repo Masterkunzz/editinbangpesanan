@@ -229,7 +229,17 @@
     const app      = initializeApp(firebaseConfig);
     const database = getDatabase(app);
     const auth     = getAuth(app);
-    signInAnonymously(auth).catch(e => console.warn('Auth gagal:', e));
+
+    // Tunggu auth selesai dulu, baru boleh fetch data
+    let authReady = false;
+    let pendingLoad = false;
+    signInAnonymously(auth)
+        .then(() => {
+            console.log('Firebase auth OK');
+            authReady = true;
+            if (pendingLoad) muatDaftarPesanan();
+        })
+        .catch(e => console.error('Auth gagal:', e));
 
     // Semua data pesanan disimpan di sini untuk filter client-side
     let allPesanan = [];
@@ -243,7 +253,12 @@
         if (u === "Admin" && p === "Ahmad") {
             document.getElementById('loginBox').style.display = "none";
             document.getElementById('adminContent').style.display = "block";
-            muatDaftarPesanan();
+            if (authReady) {
+                muatDaftarPesanan();
+            } else {
+                pendingLoad = true;
+                document.getElementById('tabelPesananBody').innerHTML = "<tr><td colspan='10' style='text-align:center;color:#6366f1;padding:20px;'>⏳ Menghubungkan ke database...</td></tr>";
+            }
         } else {
             document.getElementById('login-err').style.display = "block";
         }
