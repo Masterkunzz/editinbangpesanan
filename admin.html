@@ -148,6 +148,10 @@
                 </select>
             </div>
             <div class="form-group full-width">
+                <label>Link Brief <span style="color:#ef4444">*</span></label>
+                <input type="url" id="linkBrief" placeholder="https://drive.google.com/... atau link brief lainnya" required>
+            </div>
+            <div class="form-group full-width">
                 <label>Catatan Tambahan</label>
                 <textarea id="note" rows="3" placeholder="Instruksi khusus editing jika ada..."></textarea>
             </div>
@@ -193,6 +197,7 @@
                     <th>Produk</th>
                     <th>Harga</th>
                     <th>Deadline</th>
+                    <th>Brief</th>
                     <th>Editor</th>
                     <th>Status & Progres</th>
                     <th>Ubah Status</th>
@@ -200,7 +205,7 @@
                 </tr>
             </thead>
             <tbody id="tabelPesananBody">
-                <tr><td colspan='9' style='text-align:center;'>Memuat data...</td></tr>
+                <tr><td colspan='10' style='text-align:center;'>Memuat data...</td></tr>
             </tbody>
         </table>
     </div>
@@ -209,6 +214,7 @@
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
     import { getDatabase, ref, set, update, onValue, get, remove } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-database.js";
+    import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyC5KIQvwLtVpSCZo9eIFbvMVAxLuKvI-y0",
@@ -222,6 +228,8 @@
 
     const app      = initializeApp(firebaseConfig);
     const database = getDatabase(app);
+    const auth     = getAuth(app);
+    signInAnonymously(auth).catch(e => console.warn('Auth gagal:', e));
 
     // Semua data pesanan disimpan di sini untuk filter client-side
     let allPesanan = [];
@@ -293,7 +301,8 @@
             harga_normal  : hargaNormal || "",
             harga_diskon  : hargaDiskon,
             deadline      : document.getElementById('deadline').value,
-            editor        : document.getElementById('editor').value,   // ← dari dropdown
+            editor        : document.getElementById('editor').value,
+            link_brief    : document.getElementById('linkBrief').value,
             note          : document.getElementById('note').value,
             status        : "editor sudah menerima project",
             progres       : 10,
@@ -412,7 +421,7 @@ kritik dan saran : kritiksaran.editinbang.my.id`;
         tbody.innerHTML = '';
 
         if (filtered.length === 0) {
-            tbody.innerHTML = "<tr><td colspan='9' style='text-align:center;color:#9ca3af;padding:30px;'>Tidak ada pesanan ditemukan.</td></tr>";
+            tbody.innerHTML = "<tr><td colspan='10' style='text-align:center;color:#9ca3af;padding:30px;'>Tidak ada pesanan ditemukan.</td></tr>";
             return;
         }
 
@@ -426,6 +435,9 @@ kritik dan saran : kritiksaran.editinbang.my.id`;
 
             const bc = badgeClass(data.status);
             const lb = labelStatus(data.status);
+            const briefHTML = data.link_brief
+                ? `<a href="${data.link_brief}" target="_blank" style="display:inline-flex;align-items:center;gap:5px;background:#ede9fe;color:#5b21b6;padding:5px 10px;border-radius:6px;font-size:12px;font-weight:600;text-decoration:none;">📎 Buka Brief</a>`
+                : `<span style="color:#9ca3af;font-size:12px;">—</span>`;
 
             tbody.innerHTML += `
                 <tr style="${data.status === 'selesai' ? 'opacity:0.6;' : ''}">
@@ -434,6 +446,7 @@ kritik dan saran : kritiksaran.editinbang.my.id`;
                     <td>${data.jenis_produk}</td>
                     <td style="font-size:13px;">${hargaHTML}</td>
                     <td>${formatTanggal(data.deadline)}</td>
+                    <td>${briefHTML}</td>
                     <td><strong>${data.editor}</strong></td>
                     <td>
                         <span class="badge-status ${bc}">${lb} (${data.progres}%)</span>
