@@ -399,11 +399,13 @@ kritik dan saran : kritiksaran.editinbang.my.id`;
             return matchEditor && matchStatus && matchSearch;
         });
 
-        // Sort: belum selesai dulu, then by created_at desc
+        // Sort: selesai paling bawah, sisanya deadline terdekat paling atas
         filtered.sort((a, b) => {
-            if (a.status === 'selesai' && b.status !== 'selesai') return 1;
-            if (a.status !== 'selesai' && b.status === 'selesai') return -1;
-            return (b.created_at || 0) - (a.created_at || 0);
+            const aSelesai = a.status === 'selesai';
+            const bSelesai = b.status === 'selesai';
+            if (aSelesai && !bSelesai) return 1;
+            if (!aSelesai && bSelesai) return -1;
+            return new Date(a.deadline) - new Date(b.deadline);
         });
 
         totalBadge.textContent = `${filtered.length} pesanan`;
