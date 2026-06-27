@@ -383,9 +383,14 @@ kritik dan saran : kritiksaran.editinbang.my.id`;
     function muatDaftarPesanan() {
         onValue(ref(database, 'pesanan'), (snapshot) => {
             allPesanan = [];
+            console.log('Snapshot exists:', snapshot.exists(), '| Jumlah child:', snapshot.size);
             if (snapshot.exists()) {
-                snapshot.forEach(child => allPesanan.push(child.val()));
+                snapshot.forEach(child => {
+                    console.log('Data masuk:', child.key, child.val());
+                    allPesanan.push(child.val());
+                });
             }
+            console.log('Total allPesanan:', allPesanan.length);
             renderTable();
         });
     }
