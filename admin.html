@@ -213,7 +213,7 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
-    import { getDatabase, ref, set, update, onValue, get, remove } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-database.js";
+    import { getDatabase, ref, set, update, onValue, get, remove, query, limitToLast } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-database.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyC5KIQvwLtVpSCZo9eIFbvMVAxLuKvI-y0",
@@ -381,14 +381,23 @@ kritik dan saran : kritiksaran.editinbang.my.id`;
     // Muat & Render
     // ================================================================
     function muatDaftarPesanan() {
+        // Pakai get() untuk one-time fetch semua data
+        get(ref(database, 'pesanan')).then((snapshot) => {
+            allPesanan = [];
+            if (snapshot.exists()) {
+                snapshot.forEach(child => allPesanan.push(child.val()));
+            }
+            console.log('allPesanan:', allPesanan.length);
+            renderTable();
+        }).catch(e => console.error('Fetch error:', e));
+
+        // Tetap listen untuk update realtime setelah initial load
         onValue(ref(database, 'pesanan'), (snapshot) => {
             allPesanan = [];
             if (snapshot.exists()) {
                 snapshot.forEach(child => allPesanan.push(child.val()));
             }
-            console.log('allPesanan:', allPesanan.length, allPesanan.map(x => x.nomor_pesanan));
             renderTable();
-            console.log('renderTable selesai, tbody rows:', document.getElementById('tabelPesananBody').rows.length);
         });
     }
 
