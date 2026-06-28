@@ -307,16 +307,18 @@
             created_at    : Date.now()
         };
 
-        set(ref(database, 'pesanan/' + noPesanan), dataPesanan)
-            .then(() => {
-                bukaLinkWhatsApp(dataPesanan);
-                document.getElementById('formPesanan').reset();
-                btn.textContent = '💾 Simpan & Kirim WA';
-            })
-            .catch(err => {
-                alert("Gagal menyimpan: " + err.message);
-                btn.textContent = '💾 Simpan & Kirim WA';
-            });
+        fetch(`https://editintrack-default-rtdb.asia-southeast1.firebasedatabase.app/pesanan/${noPesanan}.json`, {
+            method: 'PUT',
+            body: JSON.stringify(dataPesanan)
+        }).then(() => {
+            bukaLinkWhatsApp(dataPesanan);
+            document.getElementById('formPesanan').reset();
+            btn.textContent = '💾 Simpan & Kirim WA';
+            fetchAndRender();
+        }).catch(err => {
+            alert("Gagal menyimpan: " + err);
+            btn.textContent = '💾 Simpan & Kirim WA';
+        });
     };
 
     // ================================================================
@@ -348,9 +350,9 @@ kritik dan saran : kritiksaran.editinbang.my.id`;
     }
 
     window.kirimUlangWA = function(noPesanan) {
-        get(ref(database, 'pesanan/' + noPesanan)).then(snap => {
-            if (snap.exists()) bukaLinkWhatsApp(snap.val());
-        });
+        fetch(`https://editintrack-default-rtdb.asia-southeast1.firebasedatabase.app/pesanan/${noPesanan}.json`)
+            .then(r => r.json())
+            .then(data => { if (data) bukaLinkWhatsApp(data); });
     };
 
     // ================================================================
@@ -363,10 +365,10 @@ kritik dan saran : kritiksaran.editinbang.my.id`;
             'finishing': 80,
             'selesai': 100
         };
-        update(ref(database, 'pesanan/' + noPesanan), {
-            status: statusBaru,
-            progres: progresMap[statusBaru]
-        });
+        fetch(`https://editintrack-default-rtdb.asia-southeast1.firebasedatabase.app/pesanan/${noPesanan}.json`, {
+            method: 'PATCH',
+            body: JSON.stringify({ status: statusBaru, progres: progresMap[statusBaru] })
+        }).then(() => fetchAndRender());
     };
 
     // ================================================================
@@ -374,31 +376,30 @@ kritik dan saran : kritiksaran.editinbang.my.id`;
     // ================================================================
     window.hapusPesanan = function(noPesanan) {
         if (!confirm(`Yakin hapus pesanan ${noPesanan}?`)) return;
-        remove(ref(database, 'pesanan/' + noPesanan));
+        fetch(`https://editintrack-default-rtdb.asia-southeast1.firebasedatabase.app/pesanan/${noPesanan}.json`, {
+            method: 'DELETE'
+        }).then(() => fetchAndRender());
     };
 
     // ================================================================
     // Muat & Render
     // ================================================================
-    function muatDaftarPesanan() {
-        // Pakai get() untuk one-time fetch semua data
-        get(ref(database, 'pesanan')).then((snapshot) => {
-            allPesanan = [];
-            if (snapshot.exists()) {
-                snapshot.forEach(child => allPesanan.push(child.val()));
-            }
-            console.log('allPesanan:', allPesanan.length);
-            renderTable();
-        }).catch(e => console.error('Fetch error:', e));
+    const DB_URL = 'https://editintrack-default-rtdb.asia-southeast1.firebasedatabase.app/pesanan.json';
 
-        // Tetap listen untuk update realtime setelah initial load
-        onValue(ref(database, 'pesanan'), (snapshot) => {
-            allPesanan = [];
-            if (snapshot.exists()) {
-                snapshot.forEach(child => allPesanan.push(child.val()));
-            }
-            renderTable();
-        });
+    function fetchAndRender() {
+        fetch(DB_URL)
+            .then(r => r.json())
+            .then(data => {
+                allPesanan = data ? Object.values(data) : [];
+                renderTable();
+            })
+            .catch(e => console.error('Fetch error:', e));
+    }
+
+    function muatDaftarPesanan() {
+        fetchAndRender();
+        // Poll setiap 5 detik untuk update realtime
+        setInterval(fetchAndRender, 5000);
     }
 
     window.renderTable = function() {
