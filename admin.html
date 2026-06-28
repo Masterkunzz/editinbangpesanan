@@ -386,7 +386,9 @@ kritik dan saran : kritiksaran.editinbang.my.id`;
             if (snapshot.exists()) {
                 snapshot.forEach(child => allPesanan.push(child.val()));
             }
+            console.log('allPesanan:', allPesanan.length, allPesanan.map(x => x.nomor_pesanan));
             renderTable();
+            console.log('renderTable selesai, tbody rows:', document.getElementById('tabelPesananBody').rows.length);
         });
     }
 
