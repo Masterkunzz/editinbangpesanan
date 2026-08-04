@@ -164,10 +164,7 @@
     <hr>
 
     <!-- Daftar Pesanan -->
-    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
-        <h3 style="margin:0">Daftar & Kontrol Progress Pesanan</h3>
-        <span id="total-badge" style="background:#ede9fe;color:#5b21b6;padding:4px 12px;border-radius:20px;font-size:13px;font-weight:600;"></span>
-    </div>
+
 
     <!-- Filter -->
     <div class="filter-bar" style="margin-top:16px;">
@@ -188,6 +185,23 @@
         <input type="text" id="filter-search" oninput="renderTable()" placeholder="Cari nama / nomor...">
     </div>
 
+    <!-- Panel Member -->
+    <hr>
+    <h3>&#11088; Kelola Poin Member</h3>
+    <div style="display:flex;gap:12px;margin-top:16px;flex-wrap:wrap;">
+        <input type="text" id="admin-wa-input" placeholder="Nomor WA member (08xxx / 62xxx)"
+            style="flex:1;padding:11px 14px;border:1px solid #d1d5db;border-radius:8px;font-family:inherit;font-size:14px;outline:none;min-width:200px;">
+        <button onclick="cariMemberAdmin()" style="padding:11px 20px;background:#6366f1;color:white;border:none;border-radius:8px;font-weight:600;font-family:inherit;cursor:pointer;">
+            &#128269; Cari Member
+        </button>
+    </div>
+    <div id="member-detail-panel"></div>
+
+    <hr>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+        <h3 style="margin:0">Daftar &amp; Kontrol Progress Pesanan</h3>
+        <span id="total-badge" style="background:#ede9fe;color:#5b21b6;padding:4px 12px;border-radius:20px;font-size:13px;font-weight:600;"></span>
+    </div>
     <div class="table-responsive">
         <table class="order-table">
             <thead>
@@ -312,6 +326,7 @@
             body: JSON.stringify(dataPesanan)
         }).then(() => {
             bukaLinkWhatsApp(dataPesanan);
+            tambahPoinOtomatis(dataPesanan);
             document.getElementById('formPesanan').reset();
             btn.textContent = '💾 Simpan & Kirim WA';
             fetchAndRender();
@@ -479,6 +494,129 @@ kritik dan saran : kritiksaran.editinbang.my.id`;
             tbody.appendChild(tr);
         });
     };
+
+    // ================================================================
+    // SISTEM POIN — otomatis saat pesanan baru dibuat
+    // ================================================================
+    async function tambahPoinOtomatis(pesanan) {
+        const wa     = pesanan.nomor_wa;
+        const harga  = parseInt(pesanan.harga_diskon) || 0;
+        const poin   = Math.floor(harga / 100000);
+        if (!wa || poin <= 0) return;
+
+        const DB = 'https://editintrack-default-rtdb.asia-southeast1.firebasedatabase.app';
+
+        // Ambil data member yang ada
+        const res  = await fetch(`${DB}/members/${wa}.json`);
+        const data = await res.json() || {};
+
+        const poinLama      = data.poin || 0;
+        const totalOrder    = (data.total_order || 0) + 1;
+        const totalBelanja  = (data.total_belanja || 0) + harga;
+        const riwayatLama   = data.riwayat || {};
+
+        // Tambah entry riwayat baru
+        const riwayatKey = 'r_' + Date.now();
+        riwayatLama[riwayatKey] = {
+            keterangan : `Order ${pesanan.nomor_pesanan} — ${pesanan.jenis_produk}`,
+            jumlah     : poin,
+            tipe       : 'tambah',
+            tanggal    : new Date().toISOString()
+        };
+
+        await fetch(`${DB}/members/${wa}.json`, {
+            method: 'PUT',
+            body: JSON.stringify({
+                nomor_wa      : wa,
+                nama          : pesanan.nama_pemesan,
+                poin          : poinLama + poin,
+                total_order   : totalOrder,
+                total_belanja : totalBelanja,
+                riwayat       : riwayatLama
+            })
+        });
+
+        console.log(`+${poin} poin untuk ${wa}`);
+    }
+
+    // ================================================================
+    // PANEL MEMBER — kelola poin manual
+    // ================================================================
+    window.cariMemberAdmin = async function() {
+        const input = document.getElementById('admin-wa-input').value.trim();
+        const wa    = input.replace(/[^0-9]/g, '');
+        const waFmt = wa.startsWith('0') ? '62' + wa.slice(1) : wa;
+
+        const res  = await fetch(`https://editintrack-default-rtdb.asia-southeast1.firebasedatabase.app/members/${waFmt}.json`);
+        const data = await res.json();
+
+        const panel = document.getElementById('member-detail-panel');
+
+        if (!data) {
+            panel.innerHTML = `<p style="color:#f87171;font-size:13px;">Member tidak ditemukan.</p>`;
+            return;
+        }
+
+        const riwayat = data.riwayat ? Object.values(data.riwayat).sort((a,b) => new Date(b.tanggal)-new Date(a.tanggal)) : [];
+        const riwayatHTML = riwayat.slice(0, 5).map(r => `
+            <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #e5e7eb;font-size:13px;">
+                <span style="color:#374151">${r.keterangan}<br><small style="color:#9ca3af">${new Date(r.tanggal).toLocaleDateString('id-ID')}</small></span>
+                <span style="font-weight:700;color:${r.tipe==='tambah'?'#10b981':'#ef4444'}">${r.tipe==='tambah'?'+':'-'}${r.jumlah}</span>
+            </div>`).join('') || '<p style="color:#9ca3af;font-size:13px;">Belum ada riwayat.</p>';
+
+        panel.innerHTML = `
+            <div style="background:#f9fafb;border-radius:10px;padding:16px;margin-top:16px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+                    <div>
+                        <div style="font-weight:700;font-size:16px;">${data.nama}</div>
+                        <div style="font-size:12px;color:#6b7280;">${waFmt} • ${data.total_order||0} order • Rp ${parseInt(data.total_belanja||0).toLocaleString('id-ID')}</div>
+                    </div>
+                    <div style="text-align:center;background:#ede9fe;padding:10px 18px;border-radius:10px;">
+                        <div style="font-size:26px;font-weight:700;color:#6366f1;">${data.poin||0}</div>
+                        <div style="font-size:11px;color:#7c3aed;">POIN</div>
+                    </div>
+                </div>
+                <div style="margin-bottom:14px;">${riwayatHTML}</div>
+                <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                    <input type="number" id="jumlah-poin-input" placeholder="Jumlah poin" min="1"
+                        style="flex:1;padding:9px 12px;border:1px solid #d1d5db;border-radius:8px;font-family:inherit;font-size:13px;outline:none;">
+                    <input type="text" id="ket-poin-input" placeholder="Keterangan"
+                        style="flex:2;padding:9px 12px;border:1px solid #d1d5db;border-radius:8px;font-family:inherit;font-size:13px;outline:none;">
+                    <button onclick="ubahPoin('${waFmt}', 'tambah')" style="padding:9px 14px;background:#10b981;color:white;border:none;border-radius:8px;font-weight:600;cursor:pointer;font-size:13px;">+ Tambah</button>
+                    <button onclick="ubahPoin('${waFmt}', 'kurang')" style="padding:9px 14px;background:#ef4444;color:white;border:none;border-radius:8px;font-weight:600;cursor:pointer;font-size:13px;">− Kurangi</button>
+                </div>
+            </div>`;
+    };
+
+    window.ubahPoin = async function(wa, tipe) {
+        const jumlah = parseInt(document.getElementById('jumlah-poin-input').value);
+        const ket    = document.getElementById('ket-poin-input').value.trim();
+        if (!jumlah || jumlah <= 0) { alert('Isi jumlah poin!'); return; }
+        if (!ket) { alert('Isi keterangan!'); return; }
+
+        const DB   = 'https://editintrack-default-rtdb.asia-southeast1.firebasedatabase.app';
+        const res  = await fetch(`${DB}/members/${wa}.json`);
+        const data = await res.json();
+        if (!data) return;
+
+        const poinBaru   = tipe === 'tambah' ? (data.poin||0) + jumlah : Math.max(0, (data.poin||0) - jumlah);
+        const riwayat    = data.riwayat || {};
+        riwayat['r_'+Date.now()] = {
+            keterangan : ket,
+            jumlah     : jumlah,
+            tipe       : tipe,
+            tanggal    : new Date().toISOString()
+        };
+
+        await fetch(`${DB}/members/${wa}.json`, {
+            method: 'PATCH',
+            body: JSON.stringify({ poin: poinBaru, riwayat })
+        });
+
+        alert(`Poin berhasil di${tipe === 'tambah' ? 'tambah' : 'kurangi'}! Poin sekarang: ${poinBaru}`);
+        cariMemberAdmin();
+    };
+
 </script>
 
 </body>
