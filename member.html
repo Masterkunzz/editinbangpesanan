@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Member EditinBang</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #0b0f19;
+            color: #f3f4f6;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 30px 20px;
+        }
+        .container { width: 100%; max-width: 480px; }
+
+        .header { text-align: center; margin-bottom: 28px; }
+        .header h1 { font-size: 26px; font-weight: 700; }
+        .header p { color: #9ca3af; font-size: 13px; margin-top: 6px; }
+
+        .card {
+            background: #111827;
+            border: 1px solid #1f2937;
+            border-radius: 16px;
+            padding: 28px;
+            margin-bottom: 16px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 13px 16px;
+            background: #1f2937;
+            border: 1px solid #374151;
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: 'Poppins', sans-serif;
+            color: #f3f4f6;
+            outline: none;
+            transition: border 0.2s;
+            margin-bottom: 12px;
+        }
+        input:focus { border-color: #6366f1; box-shadow: 0 0 0 2px rgba(99,102,241,0.15); }
+
+        .btn {
+            width: 100%;
+            padding: 13px;
+            background: linear-gradient(135deg, #6366f1, #4f46e5);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .btn:hover { opacity: 0.9; }
+
+        /* Member card */
+        .member-card { display: none; }
+
+        .points-display {
+            text-align: center;
+            padding: 24px 0 20px;
+            border-bottom: 1px solid #1f2937;
+            margin-bottom: 20px;
+        }
+        .points-number {
+            font-size: 56px;
+            font-weight: 700;
+            color: #6366f1;
+            line-height: 1;
+        }
+        .points-label {
+            font-size: 14px;
+            color: #9ca3af;
+            margin-top: 6px;
+        }
+        .points-value {
+            margin-top: 8px;
+            font-size: 13px;
+            color: #10b981;
+            font-weight: 600;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .info-box {
+            background: #1f2937;
+            border-radius: 10px;
+            padding: 14px;
+            text-align: center;
+        }
+        .info-box .val {
+            font-size: 20px;
+            font-weight: 700;
+            color: #f3f4f6;
+        }
+        .info-box .lbl {
+            font-size: 11px;
+            color: #6b7280;
+            margin-top: 3px;
+        }
+
+        .redeem-box {
+            background: rgba(99,102,241,0.08);
+            border: 1px solid rgba(99,102,241,0.2);
+            border-radius: 10px;
+            padding: 14px 16px;
+            font-size: 13px;
+            color: #a5b4fc;
+            line-height: 1.7;
+            margin-bottom: 16px;
+        }
+        .redeem-box strong { color: #c7d2fe; }
+
+        .btn-wa {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            padding: 13px;
+            background: #25d366;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+        .btn-wa:hover { background: #1ebd59; }
+
+        .history-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            margin-bottom: 12px;
+        }
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #1f2937;
+            font-size: 13px;
+        }
+        .history-item:last-child { border-bottom: none; }
+        .history-item .desc { color: #d1d5db; }
+        .history-item .desc small { display: block; color: #6b7280; font-size: 11px; margin-top: 2px; }
+        .poin-plus  { color: #10b981; font-weight: 700; }
+        .poin-minus { color: #f87171; font-weight: 700; }
+
+        .empty-history { color: #4b5563; font-size: 13px; text-align: center; padding: 16px 0; }
+
+        .error-msg { color: #f87171; font-size: 13px; text-align: center; margin-top: 10px; display: none; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>⭐ Member EditinBang</h1>
+        <p>Cek poin reward kamu di sini</p>
+    </div>
+
+    <!-- Search -->
+    <div class="card" id="search-card">
+        <p style="font-size:14px;color:#9ca3af;margin-bottom:16px;line-height:1.6">
+            Masukkan nomor WhatsApp yang kamu gunakan saat order pertama kali.
+        </p>
+        <input type="text" id="wa-input" placeholder="Contoh: 08123456789 atau 628123456789">
+        <button class="btn" onclick="cariMember()">🔍 Cek Poin Saya</button>
+        <p class="error-msg" id="error-msg">Nomor tidak ditemukan. Pastikan kamu sudah pernah order!</p>
+    </div>
+
+    <!-- Member Info -->
+    <div class="member-card card" id="member-card">
+        <div class="points-display">
+            <div class="points-number" id="poin-angka">0</div>
+            <div class="points-label">Total Poin</div>
+            <div class="points-value" id="nilai-diskon">Setara diskon Rp 0</div>
+        </div>
+
+        <div class="info-grid">
+            <div class="info-box">
+                <div class="val" id="total-order">0</div>
+                <div class="lbl">Total Order</div>
+            </div>
+            <div class="info-box">
+                <div class="val" id="total-belanja">Rp 0</div>
+                <div class="lbl">Total Belanja</div>
+            </div>
+        </div>
+
+        <div class="redeem-box">
+            💡 <strong>Cara pakai poin:</strong><br>
+            Chat kami via WhatsApp, sebutkan nomor WA & jumlah poin yang mau dipakai.
+            Maks. redeem <strong>50% dari harga order</strong>.
+        </div>
+
+        <a id="btn-redeem-wa" href="#" target="_blank" class="btn-wa">
+            💬 Redeem Poin via WhatsApp
+        </a>
+    </div>
+
+    <!-- Riwayat -->
+    <div class="member-card card" id="history-card">
+        <div class="history-title">📜 Riwayat Poin</div>
+        <div id="history-list"></div>
+    </div>
+</div>
+
+<script>
+    const DB_BASE = 'https://editintrack-default-rtdb.asia-southeast1.firebasedatabase.app';
+    const WA_ADMIN = '6281234567890'; // ← ganti nomor WA admin/bisnismu
+
+    function formatKe62(nomor) {
+        let n = nomor.replace(/[^0-9]/g, '');
+        return n.startsWith('0') ? '62' + n.slice(1) : n;
+    }
+
+    function formatRp(angka) {
+        return 'Rp ' + parseInt(angka || 0).toLocaleString('id-ID');
+    }
+
+    function formatTgl(iso) {
+        if (!iso) return '';
+        return new Date(iso).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+    }
+
+    window.cariMember = async function() {
+        const input = document.getElementById('wa-input').value.trim();
+        const wa    = formatKe62(input);
+        const err   = document.getElementById('error-msg');
+        err.style.display = 'none';
+
+        if (!wa) return;
+
+        try {
+            const res  = await fetch(`${DB_BASE}/members/${wa}.json`);
+            const data = await res.json();
+
+            if (!data) {
+                err.style.display = 'block';
+                return;
+            }
+
+            tampilMember(wa, data);
+        } catch(e) {
+            err.style.display = 'block';
+        }
+    };
+
+    function tampilMember(wa, data) {
+        const poin        = data.poin || 0;
+        const totalOrder  = data.total_order || 0;
+        const totalBelanja= data.total_belanja || 0;
+        const riwayat     = data.riwayat ? Object.values(data.riwayat) : [];
+
+        document.getElementById('poin-angka').textContent  = poin;
+        document.getElementById('nilai-diskon').textContent = `Setara diskon ${formatRp(poin * 5000)}`;
+        document.getElementById('total-order').textContent  = totalOrder;
+        document.getElementById('total-belanja').textContent = formatRp(totalBelanja);
+
+        // Link WA redeem
+        const pesan = `Halo kak, saya mau redeem poin member saya.\nNomor WA: ${wa}\nPoin saya: ${poin} poin (setara diskon ${formatRp(poin * 5000)})`;
+        document.getElementById('btn-redeem-wa').href =
+            `https://api.whatsapp.com/send?phone=${WA_ADMIN}&text=${encodeURIComponent(pesan)}`;
+
+        // Riwayat
+        const historyEl = document.getElementById('history-list');
+        if (riwayat.length === 0) {
+            historyEl.innerHTML = '<div class="empty-history">Belum ada riwayat poin.</div>';
+        } else {
+            riwayat.sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal));
+            historyEl.innerHTML = riwayat.map(r => `
+                <div class="history-item">
+                    <div class="desc">
+                        ${r.keterangan}
+                        <small>${formatTgl(r.tanggal)}</small>
+                    </div>
+                    <div class="${r.tipe === 'tambah' ? 'poin-plus' : 'poin-minus'}">
+                        ${r.tipe === 'tambah' ? '+' : '-'}${r.jumlah} poin
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Tampilkan kartu
+        document.querySelectorAll('.member-card').forEach(el => el.style.display = 'block');
+    }
+</script>
+
+</body>
+</html>
