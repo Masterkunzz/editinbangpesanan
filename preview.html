@@ -91,9 +91,12 @@ main{flex:1;display:flex;flex-direction:column;align-items:center;padding:32px 2
   display:block;
 }
 
-/* Overlay transparan — block klik kanan & interaksi langsung ke iframe */
+/* Overlay — hanya nutup sudut kanan bawah (area download button GDrive)
+   biar play button di tengah tetap bisa diklik */
 .player-overlay{
-  position:absolute;inset:0;
+  position:absolute;
+  bottom:0; right:0;
+  width:120px; height:50px;
   z-index:10;
   background:transparent;
   cursor:default;
@@ -306,8 +309,8 @@ function showPlayer(app, data, expiresAt) {
         <iframe
           src="${embedUrl}"
           allowfullscreen
-          allow="autoplay"
-          referrerpolicy="no-referrer">
+          allow="autoplay; fullscreen"
+          frameborder="0">
         </iframe>
         <div class="player-overlay" id="player-overlay"></div>
         <div class="watermark">
