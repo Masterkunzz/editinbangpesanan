@@ -250,23 +250,31 @@ async function init() {
   }
 }
 
-function extractGDriveId(url) {
-  // Support berbagai format link GDrive
-  const patterns = [
-    /\/file\/d\/([a-zA-Z0-9_-]+)/,
-    /id=([a-zA-Z0-9_-]+)/,
-    /\/d\/([a-zA-Z0-9_-]+)/
-  ];
-  for (const p of patterns) {
-    const m = url.match(p);
-    if (m) return m[1];
-  }
+function getEmbedUrl(url) {
+  if (!url) return null;
+
+  // Streamable: https://streamable.com/xxxxx
+  const streamable = url.match(/streamable\.com\/([a-zA-Z0-9]+)/);
+  if (streamable) return `https://streamable.com/e/${streamable[1]}?autoplay=0`;
+
+  // YouTube: youtu.be/ID atau youtube.com/watch?v=ID atau youtube.com/shorts/ID
+  const yt1 = url.match(/youtu\.be\/([a-zA-Z0-9_-]+)/);
+  const yt2 = url.match(/youtube\.com\/watch\?v=([a-zA-Z0-9_-]+)/);
+  const yt3 = url.match(/youtube\.com\/shorts\/([a-zA-Z0-9_-]+)/);
+  const ytId = (yt1||yt2||yt3)?.[1];
+  if (ytId) return `https://www.youtube.com/embed/${ytId}?rel=0&modestbranding=1`;
+
+  // Google Drive
+  const gd1 = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+  const gd2 = url.match(/id=([a-zA-Z0-9_-]+)/);
+  const gdId = (gd1||gd2)?.[1];
+  if (gdId) return `https://drive.google.com/file/d/${gdId}/preview`;
+
   return null;
 }
 
 function showPlayer(app, data, expiresAt) {
-  const fileId    = extractGDriveId(data.gdrive_url);
-  const embedUrl  = `https://drive.google.com/file/d/${fileId}/preview?usp=sharing`;
+  const embedUrl = getEmbedUrl(data.gdrive_url);
   const expDate   = new Date(expiresAt).toLocaleString('id-ID', {
     day:'numeric', month:'long', year:'numeric',
     hour:'2-digit', minute:'2-digit'
